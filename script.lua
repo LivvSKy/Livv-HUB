@@ -1,5 +1,5 @@
 -- ==========================================================
--- LIVV HUB - PREMIUM MONOCHROME EDITION (SLIDER & TOGGLE UPDATE)
+-- LIVV HUB - PREMIUM MONOCHROME EDITION (DRAGGABLE LINGKARAN & ADMIN TAB UPDATE)
 -- ==========================================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -17,19 +17,55 @@ end
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "LivvHubPanel"
 screenGui.ResetOnSpawn = false
+screenGui.DisplayOrder = math.huge -- Mengharuskan UI berada di paling depan dari segala UI Roblox
 screenGui.Parent = playerGui
 
--- Tombol Minimize Bulat Minimalis Samping ("> L")
+-- === TOMBOL MINIMIZE BULAT & BISA DIGESER (DRAGGABLE) ===
 local miniBtn = Instance.new("TextButton")
-miniBtn.Size = UDim2.new(0, 50, 0, 45)
-miniBtn.Position = UDim2.new(0, 15, 0, 80)
-miniBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-miniBtn.Text = "> L"
+miniBtn.Size = UDim2.new(0, 50, 0, 50) -- Mengubah ukuran menjadi lingkaran proporsional 50x50
+miniBtn.Position = UDim2.new(0, 15, 0, 120)
+miniBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+miniBtn.Text = "L"
 miniBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-miniBtn.TextSize = 15
+miniBtn.TextSize = 16
 miniBtn.Font = Enum.Font.GothamBold
 miniBtn.Parent = screenGui
-Instance.new("UICorner", miniBtn).CornerRadius = UDim.new(0, 8)
+
+local miniCorner = Instance.new("UICorner")
+miniCorner.CornerRadius = UDim.new(1, 0) -- Bulat Sempurna (Lingkaran)
+miniCorner.Parent = miniBtn
+
+-- Fitur Geser (Draggable) untuk Tombol Minimize Lingkaran
+local dragToggle = nil
+local dragStart = nil
+local startPos = nil
+
+local function updateInput(input)
+    local delta = input.Position - dragStart
+    local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    game:GetService("TweenService"):Create(miniBtn, TweenInfo.new(0.1), {Position = position}):Play()
+end
+
+miniBtn.InputBegan:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+        dragToggle = true
+        dragStart = input.Position
+        startPos = miniBtn.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragToggle = false
+            end
+        end)
+    end
+end)
+
+miniBtn.InputChanged:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        if dragToggle then
+            updateInput(input)
+        end
+    end
+end)
 
 -- Frame Utama (Panel Livv Hub)
 local mainFrame = Instance.new("Frame")
@@ -58,14 +94,13 @@ local sideCorner = Instance.new("UICorner")
 sideCorner.CornerRadius = UDim.new(0, 10)
 sideCorner.Parent = sideBar
 
--- Blok Penutup Sudut Kanan Sidebar (Agar tidak rounded di dalam panel tengah)
 local sideCover = Instance.new("Frame", sideBar)
 sideCover.Size = UDim2.new(0, 20, 1, 0)
 sideCover.Position = UDim2.new(1, -20, 0, 0)
 sideCover.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 sideCover.BorderSizePixel = 0
 
--- Nama Hub Baru di Atas Kiri: Livv Hub
+-- Nama Hub
 local brandText = Instance.new("TextLabel", sideBar)
 brandText.Size = UDim2.new(1, -20, 0, 45)
 brandText.Position = UDim2.new(0, 15, 0, 5)
@@ -76,7 +111,7 @@ brandText.Font = Enum.Font.GothamBold
 brandText.TextSize = 18
 brandText.TextXAlignment = Enum.TextXAlignment.Left
 
--- Container Tab Navigasi
+-- Container Tab Navigasi (Sidebar Menu)
 local tabContainer = Instance.new("Frame", sideBar)
 tabContainer.Size = UDim2.new(1, -16, 1, -70)
 tabContainer.Position = UDim2.new(0, 8, 0, 55)
@@ -111,12 +146,15 @@ Instance.new("UICorner", contentArea).CornerRadius = UDim.new(0, 8)
 
 local mainTab = Instance.new("ScrollingFrame", contentArea); mainTab.Size = UDim2.new(1,0,1,0); mainTab.BackgroundTransparency = 1; mainTab.ScrollBarThickness = 2
 local targetTab = Instance.new("ScrollingFrame", contentArea); targetTab.Size = UDim2.new(1,0,1,0); targetTab.BackgroundTransparency = 1; targetTab.ScrollBarThickness = 2; targetTab.Visible = false
+local adminTab = Instance.new("ScrollingFrame", contentArea); adminTab.Size = UDim2.new(1,0,1,0); adminTab.BackgroundTransparency = 1; adminTab.ScrollBarThickness = 2; adminTab.Visible = false
 
 local layoutMain = Instance.new("UIListLayout", mainTab); layoutMain.Padding = UDim.new(0, 8); layoutMain.HorizontalAlignment = Enum.HorizontalAlignment.Center
 local layoutTarget = Instance.new("UIListLayout", targetTab); layoutTarget.Padding = UDim.new(0, 8); layoutTarget.HorizontalAlignment = Enum.HorizontalAlignment.Center
+local layoutAdmin = Instance.new("UIListLayout", adminTab); layoutAdmin.Padding = UDim.new(0, 8); layoutAdmin.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 Instance.new("Frame", mainTab).Size = UDim2.new(1, 0, 0, 2)
 Instance.new("Frame", targetTab).Size = UDim2.new(1, 0, 0, 2)
+Instance.new("Frame", adminTab).Size = UDim2.new(1, 0, 0, 2)
 
 -- Sistem Pembuatan Navigasi Tab Klik
 local function createTabButton(text)
@@ -134,22 +172,32 @@ end
 
 local btnTabMain = createTabButton("Main")
 local btnTabTarget = createTabButton("Target")
+local btnTabAdmin = createTabButton("Admin") -- Menambahkan Tab Admin ke sidebar menu
 
-local function switchTab(toMain)
-    mainTab.Visible = toMain
-    targetTab.Visible = not toMain
-    titleLabel.Text = toMain and "Main" or "Target"
-    btnTabMain.BackgroundColor3 = toMain and Color3.fromRGB(22, 22, 22) or Color3.fromRGB(10, 10, 10)
-    btnTabMain.TextColor3 = toMain and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(160, 160, 160)
-    btnTabTarget.BackgroundColor3 = not toMain and Color3.fromRGB(22, 22, 22) or Color3.fromRGB(10, 10, 10)
-    btnTabTarget.TextColor3 = not toMain and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(160, 160, 160)
+local function switchTab(tabCode)
+    mainTab.Visible = (tabCode == "main")
+    targetTab.Visible = (tabCode == "target")
+    adminTab.Visible = (tabCode == "admin")
+    
+    titleLabel.Text = tabCode:gsub("^%l", string.upper)
+    
+    btnTabMain.BackgroundColor3 = (tabCode == "main") and Color3.fromRGB(22, 22, 22) or Color3.fromRGB(10, 10, 10)
+    btnTabMain.TextColor3 = (tabCode == "main") and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(160, 160, 160)
+    
+    btnTabTarget.BackgroundColor3 = (tabCode == "target") and Color3.fromRGB(22, 22, 22) or Color3.fromRGB(10, 10, 10)
+    btnTabTarget.TextColor3 = (tabCode == "target") and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(160, 160, 160)
+    
+    btnTabAdmin.BackgroundColor3 = (tabCode == "admin") and Color3.fromRGB(22, 22, 22) or Color3.fromRGB(10, 10, 10)
+    btnTabAdmin.TextColor3 = (tabCode == "admin") and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(160, 160, 160)
 end
-btnTabMain.MouseButton1Click:Connect(function() switchTab(true) end)
-btnTabTarget.MouseButton1Click:Connect(function() switchTab(false) end)
-switchTab(true)
+
+btnTabMain.MouseButton1Click:Connect(function() switchTab("main") end)
+btnTabTarget.MouseButton1Click:Connect(function() switchTab("target") end)
+btnTabAdmin.MouseButton1Click:Connect(function() switchTab("admin") end)
+switchTab("main")
 
 
--- === FUNGSI BANTUAN KONTROL: TOGGLE ON / OFF (Sesuai Gambar 1000185553.jpg) ===
+-- === FUNGSI BANTUAN KONTROL: TOGGLE ON / OFF ===
 local function createToggle(parent, labelText, callback)
     local container = Instance.new("Frame")
     container.Size = UDim2.new(0.96, 0, 0, 45)
@@ -168,7 +216,6 @@ local function createToggle(parent, labelText, callback)
     lbl.TextXAlignment = Enum.TextXAlignment.Left
     lbl.Parent = container
 
-    -- Struktur Komponen Toggle Switch
     local switchBg = Instance.new("TextButton")
     switchBg.Size = UDim2.new(0, 46, 0, 22)
     switchBg.Position = UDim2.new(1, -58, 0.5, -11)
@@ -188,12 +235,10 @@ local function createToggle(parent, labelText, callback)
     switchBg.MouseButton1Click:Connect(function()
         isOn = not isOn
         if isOn then
-            -- Kondisi Menyala Hijau Terang
             switchBg.BackgroundColor3 = Color3.fromRGB(100, 180, 60)
             switchDot.Position = UDim2.new(1, -19, 0.5, -8)
             callback(true)
         else
-            -- Kondisi Mati Gelap Monokrom
             switchBg.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
             switchDot.Position = UDim2.new(0, 3, 0.5, -8)
             callback(false)
@@ -202,7 +247,7 @@ local function createToggle(parent, labelText, callback)
 end
 
 
--- === FUNGSI BANTUAN KONTROL: SLIDER BAR + TEXTBOX INPUT (Sesuai Gambar 1000185554.jpg) ===
+-- === FUNGSI BANTUAN KONTROL: SLIDER BAR + TEXTBOX INPUT ===
 local function createSlider(parent, labelText, minVal, maxVal, defaultVal, callback)
     local container = Instance.new("Frame")
     container.Size = UDim2.new(0.96, 0, 0, 55)
@@ -221,7 +266,6 @@ local function createSlider(parent, labelText, minVal, maxVal, defaultVal, callb
     lbl.TextXAlignment = Enum.TextXAlignment.Left
     lbl.Parent = container
 
-    -- Kotak Kecil Input Nilai Di Sebelah Kanan (Terpisah, Tidak Menimpa Teks Fitur)
     local inputBox = Instance.new("TextBox")
     inputBox.Size = UDim2.new(0, 45, 0, 20)
     inputBox.Position = UDim2.new(1, -58, 0, 6)
@@ -233,7 +277,6 @@ local function createSlider(parent, labelText, minVal, maxVal, defaultVal, callb
     inputBox.Parent = container
     Instance.new("UICorner", inputBox).CornerRadius = UDim.new(0, 4)
 
-    -- Bar Track Slider Utama
     local sliderTrack = Instance.new("TextButton")
     sliderTrack.Size = UDim2.new(1, -24, 0, 5)
     sliderTrack.Position = UDim2.new(0, 12, 0, 36)
@@ -242,7 +285,6 @@ local function createSlider(parent, labelText, minVal, maxVal, defaultVal, callb
     sliderTrack.Parent = container
     Instance.new("UICorner", sliderTrack).CornerRadius = UDim.new(1, 0)
 
-    -- Tombol Bulat Penggeser (Pin Knob)
     local sliderBtn = Instance.new("Frame", sliderTrack)
     sliderBtn.Size = UDim2.new(0, 14, 0, 14)
     sliderBtn.Position = UDim2.new(0, 0, 0.5, -7)
@@ -257,10 +299,8 @@ local function createSlider(parent, labelText, minVal, maxVal, defaultVal, callb
         callback(clamped)
     end
 
-    -- Setup Posisi Titik Awal Default
     updateSliderPosition(defaultVal)
 
-    -- Logika Gerak Geser Slider Fisik
     local dragging = false
     sliderTrack.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -283,23 +323,18 @@ local function createSlider(parent, labelText, minVal, maxVal, defaultVal, callb
         end
     end)
 
-    -- Logika Ketik Manual Melalui Kotak Kecil Input Angka
     inputBox.FocusLost:Connect(function()
         local val = tonumber(inputBox.Text)
-        if val then
-            updateSliderPosition(val)
-        else
-            updateSliderPosition(defaultVal)
-        end
+        if val then updateSliderPosition(val) else updateSliderPosition(defaultVal) end
     end)
 end
 
 
 -- ==========================================================
--- EKSEKUSI FITUR KODE UTAMA DI DALAM TAB MAIN (TANPA DIKORUP)
+-- ISI KONTEN DI DALAM TAB MAIN
 -- ==========================================================
 
--- 1. Fly Feature (Toggle Update)
+-- 1. Fly Feature
 local flyBodyVelocity = nil
 local flyLoop = nil
 createToggle(mainTab, "Fly (Terbang Kamera)", function(state)
@@ -338,7 +373,7 @@ createToggle(mainTab, "Fly (Terbang Kamera)", function(state)
     end
 end)
 
--- 2. Noclip Feature (Toggle Update)
+-- 2. Noclip Feature
 local noclipLoop = nil
 createToggle(mainTab, "Noclip (Tembus Dinding)", function(state)
     if state then
@@ -356,7 +391,7 @@ createToggle(mainTab, "Noclip (Tembus Dinding)", function(state)
     end
 end)
 
--- 3. ESP Feature (Toggle Update + Auto Apply On Respawn Loop)
+-- 3. ESP Feature (Auto Apply On Respawn Loop)
 local espActive = false
 local playerConnections = {}
 local function applyESP(p)
@@ -406,7 +441,7 @@ createToggle(mainTab, "ESP & Name (Melihat Pemain)", function(state)
     end
 end)
 
--- 4. Invincible Feature (Toggle Update)
+-- 4. Invincible Feature
 local hpLoop = nil
 createToggle(mainTab, "Invincible (Kekebalan 100 HP)", function(state)
     if state then
@@ -429,14 +464,14 @@ createToggle(mainTab, "Invincible (Kekebalan 100 HP)", function(state)
     end
 end)
 
--- 5. UPGRADE: WalkSpeed Slider (Bisa Digeser & Bisa Di-input lewat Kotak Kecil Terpisah)
+-- 5. WalkSpeed Slider
 createSlider(mainTab, "Walk Speed Player", 16, 250, 16, function(value)
     if player.Character and player.Character:FindFirstChild("Humanoid") then
         player.Character.Humanoid.WalkSpeed = value
     end
 end)
 
--- 6. UPGRADE: JumpPower Slider (Bisa Digeser & Bisa Di-input lewat Kotak Kecil Terpisah)
+-- 6. JumpPower Slider
 createSlider(mainTab, "Jump Power Player", 50, 500, 50, function(value)
     if player.Character and player.Character:FindFirstChild("Humanoid") then
         local hum = player.Character.Humanoid
@@ -447,7 +482,7 @@ end)
 
 
 -- ==========================================================
--- EKSEKUSI FITUR KODE UTAMA DI DALAM TAB TARGET 
+-- ISI KONTEN DI DALAM TAB TARGET
 -- ==========================================================
 local targetInput = Instance.new("TextBox")
 targetInput.Size = UDim2.new(0.96, 0, 0, 32)
@@ -460,7 +495,6 @@ targetInput.TextSize = 12
 targetInput.Parent = targetTab
 Instance.new("UICorner", targetInput).CornerRadius = UDim.new(0, 6)
 
--- Dropdown Daftar Pemain
 local ddButton = Instance.new("TextButton")
 ddButton.Size = UDim2.new(0.96, 0, 0, 28)
 ddButton.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
@@ -508,7 +542,7 @@ local function getTargetPlayer()
     return nil
 end
 
--- 1. Explode Target (Menggunakan Sistem Trigger Toggle Sekali Klik)
+-- 1. Explode Target
 createToggle(targetTab, "Explode Target", function(state)
     if state then
         local target = getTargetPlayer()
@@ -520,7 +554,7 @@ createToggle(targetTab, "Explode Target", function(state)
     end
 end)
 
--- 2. Teleport Ke Target (Menggunakan Sistem Trigger Toggle Sekali Klik)
+-- 2. Teleport Ke Target
 createToggle(targetTab, "Teleport Ke Target", function(state)
     if state then
         local target = getTargetPlayer()
@@ -532,7 +566,7 @@ createToggle(targetTab, "Teleport Ke Target", function(state)
     end
 end)
 
--- 3. Fling Target Feature (Toggle Active Update Loop)
+-- 3. Fling Target
 local flingLoop = nil
 local bAngular = nil
 createToggle(targetTab, "Fling Target (Loop Physics)", function(state)
@@ -559,4 +593,30 @@ createToggle(targetTab, "Fling Target (Loop Physics)", function(state)
         if bAngular then bAngular:Destroy() bAngular = nil end
         if flingLoop then flingLoop:Disconnect() flingLoop = nil end
     end
+end)
+
+
+-- ==========================================================
+-- KHUSUS TAB ADMIN (HANYA SATU TOMBOL START, TANPA TOMBOL STOP)
+-- ==========================================================
+local adminContainer = Instance.new("Frame")
+adminContainer.Size = UDim2.new(0.96, 0, 0, 50)
+adminContainer.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+adminContainer.Parent = adminTab
+Instance.new("UICorner", adminContainer).CornerRadius = UDim.new(0, 6)
+
+local adminStartBtn = Instance.new("TextButton")
+adminStartBtn.Size = UDim2.new(1, -20, 1, -16)
+adminStartBtn.Position = UDim2.new(0, 10, 0, 8)
+adminStartBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+adminStartBtn.Text = "[ Start Infinite Yield ]"
+adminStartBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+adminStartBtn.Font = Enum.Font.GothamBold
+adminStartBtn.TextSize = 12
+adminStartBtn.Parent = adminContainer
+Instance.new("UICorner", adminStartBtn).CornerRadius = UDim.new(0, 5)
+
+-- Eksekusi Loadstring Sekali Klik Tanpa Ada Opsi Stop Sesuai Permintaan
+adminStartBtn.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/DarkNetworks/Infinite-Yield/main/latest.lua'))()
 end)
