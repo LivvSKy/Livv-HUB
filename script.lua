@@ -779,5 +779,5 @@ adminStartBtn.Parent = adminContainer
 Instance.new("UICorner", adminStartBtn).CornerRadius = UDim.new(0, 5)
 
 adminStartBtn.MouseButton1Click:Connect(function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/DarkNetworks/Infinite-Yield/main/latest.lua'))()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
 end)
