@@ -1,15 +1,16 @@
 -- ==========================================================
--- LIVV HUB - V3 ULTIMATE MONOCHROME (SMOOTH ANIMATION & LOADING UPDATE)
+-- LIVV HUB - V4 ADVANCED MONOCHROME (CONFIRMATION & SETTINGS UPDATE)
 -- ==========================================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
+local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
 local camera = workspace.CurrentCamera
 
 -- KUSTOMISASI LOGO KAMI (Ubah ID di bawah jika ingin mengganti gambar tombol bulat)
-local logoId = "rbxassetid://6031075931" -- Placeholder asset ID gambar premium siluet
+local logoId = "rbxassetid://6031075931"
 
 -- Hapus GUI lama jika ada (Reset Total)
 local playerGui = player:WaitForChild("PlayerGui")
@@ -35,7 +36,6 @@ loadingFrame.BorderSizePixel = 0
 loadingFrame.Parent = screenGui
 Instance.new("UICorner", loadingFrame).CornerRadius = UDim.new(0, 10)
 
--- Stroke border tipis estetik monokrom
 local loadStroke = Instance.new("UIStroke", loadingFrame)
 loadStroke.Color = Color3.fromRGB(40, 40, 40)
 loadStroke.Thickness = 1
@@ -49,7 +49,6 @@ loadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
 loadingText.Font = Enum.Font.GothamBold
 loadingText.TextSize = 14
 
--- Bar Loading Animasi
 local barBg = Instance.new("Frame", loadingFrame)
 barBg.Size = UDim2.new(0.8, 0, 0, 6)
 barBg.Position = UDim2.new(0.1, 0, 0, 85)
@@ -63,12 +62,10 @@ barFill.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 barFill.BorderSizePixel = 0
 Instance.new("UICorner", barFill).CornerRadius = UDim.new(1, 0)
 
--- Jalankan Animasi Pengisian Loading Bar (Mulus 2.5 Detik)
 local loadTween = TweenService:Create(barFill, TweenInfo.new(2.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 1, 0)})
 loadTween:Play()
 loadTween.Completed:Wait()
 
--- Efek Fade Out Loading Screen Sebelum Hilang Sepenuhnya
 local fadeTween = TweenService:Create(loadingFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1})
 TweenService:Create(loadingText, TweenInfo.new(0.4), {TextTransparency = 1}):Play()
 TweenService:Create(barBg, TweenInfo.new(0.4), {BackgroundTransparency = 1}):Play()
@@ -76,20 +73,19 @@ TweenService:Create(barFill, TweenInfo.new(0.4), {BackgroundTransparency = 1}):P
 TweenService:Create(loadStroke, TweenInfo.new(0.4), {Transparency = 1}):Play()
 fadeTween:Play()
 fadeTween.Completed:Wait()
-loadingFrame:Destroy() -- Terhapus sepenuhnya dari memori game
+loadingFrame:Destroy()
 
 
 -- ==========================================================
 -- TAHAP 2: SCRIPT INTI GUI UTAMA & LINGKARAN MINIMIZE
 -- ==========================================================
 
--- Tombol Minimize Bulat (Lingkaran Premium + Support Image Link)
 local miniBtn = Instance.new("ImageButton")
 miniBtn.Size = UDim2.new(0, 55, 0, 55)
 miniBtn.Position = UDim2.new(0, 20, 0, 120)
 miniBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 miniBtn.Image = logoId
-miniBtn.Visible = false -- Tersembunyi saat awal terbuka
+miniBtn.Visible = false
 miniBtn.Parent = screenGui
 
 local miniCorner = Instance.new("UICorner")
@@ -100,7 +96,6 @@ local miniStroke = Instance.new("UIStroke", miniBtn)
 miniStroke.Color = Color3.fromRGB(60, 60, 60)
 miniStroke.Thickness = 1.5
 
--- Huruf "L" sebagai placeholder cadangan jika link gambar kosong/gagal termuat
 local miniText = Instance.new("TextLabel", miniBtn)
 miniText.Size = UDim2.new(1, 0, 1, 0)
 miniText.BackgroundTransparency = 1
@@ -109,7 +104,6 @@ miniText.TextColor3 = Color3.fromRGB(255, 255, 255)
 miniText.Font = Enum.Font.GothamBold
 miniText.TextSize = 18
 
--- Frame Utama (Panel Livv Hub)
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 550, 0, 380)
 mainFrame.Position = UDim2.new(0.5, -275, 0.5, -190)
@@ -155,7 +149,6 @@ local function buatDraggable(uiElemen)
     end)
 end
 
--- Terapkan sistem drag fleksibel pada Frame Utama dan Tombol Lingkaran
 buatDraggable(mainFrame)
 buatDraggable(miniBtn)
 
@@ -168,7 +161,6 @@ local function animasikanBuka()
     if isTweening then return end
     isTweening = true
     
-    -- Ambil koordinat posisi tengah tombol bulat saat ini agar transisi berpusat dari sana
     mainFrame.Position = miniBtn.Position
     mainFrame.Size = UDim2.new(0, 0, 0, 0)
     mainFrame.BackgroundTransparency = 1
@@ -199,27 +191,90 @@ local function animasikanMinimize()
     isTweening = false
 end
 
-local function animasikanTutupTotal()
-    if isTweening then return end
-    isTweening = true
-    
-    local closeTween = TweenService:Create(mainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 550, 0, 0), BackgroundTransparency = 1})
-    closeTween:Play()
-    closeTween.Completed:Wait()
-    
-    screenGui:Destroy() -- BENAR-BENAR HILANG SEPENUHNYA DARI GAME
-end
-
 miniBtn.MouseButton1Click:Connect(animasikanBuka)
 
 
--- === STRUKTUR WINDOW BAR ATAS (JUDUL & TOMBOL KONTROL) ===
+-- ==========================================================
+-- SISTEM POP-UP WARNING KONFIRMASI CLOSE TOTAL (YES / NO)
+-- ==========================================================
+local confirmOverlay = Instance.new("Frame")
+confirmOverlay.Size = UDim2.new(1, 0, 1, 0)
+confirmOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+confirmOverlay.BackgroundTransparency = 1 -- Berawal transparan
+confirmOverlay.Visible = false
+confirmOverlay.ZIndex = 5000
+confirmOverlay.Parent = mainFrame
+
+local confirmBox = Instance.new("Frame")
+confirmBox.Size = UDim2.new(0, 280, 0, 130)
+confirmBox.Position = UDim2.new(0.5, -140, 0.5, -65)
+confirmBox.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+confirmBox.BorderSizePixel = 0
+confirmBox.ZIndex = 5001
+confirmBox.Parent = confirmOverlay
+Instance.new("UICorner", confirmBox).CornerRadius = UDim.new(0, 8)
+Instance.new("UIStroke", confirmBox).Color = Color3.fromRGB(50, 50, 50)
+
+local confirmText = Instance.new("TextLabel", confirmBox)
+confirmText.Size = UDim2.new(1, -20, 0, 50)
+confirmText.Position = UDim2.new(0, 10, 0, 15)
+confirmText.BackgroundTransparency = 1
+confirmText.Text = "Are you sure you want to close Livv Hub?"
+confirmText.TextColor3 = Color3.fromRGB(240, 240, 240)
+confirmText.Font = Enum.Font.GothamBold
+confirmText.TextSize = 12
+confirmText.TextWrapped = true
+confirmText.ZIndex = 5002
+
+local btnYes = Instance.new("TextButton", confirmBox)
+btnYes.Size = UDim2.new(0, 100, 0, 30)
+btnYes.Position = UDim2.new(0.15, 0, 0, 80)
+btnYes.BackgroundColor3 = Color3.fromRGB(40, 15, 15)
+btnYes.Text = "Yes"
+btnYes.TextColor3 = Color3.fromRGB(255, 100, 100)
+btnYes.Font = Enum.Font.GothamBold
+btnYes.TextSize = 12
+btnYes.ZIndex = 5002
+Instance.new("UICorner", btnYes).CornerRadius = UDim.new(0, 5)
+
+local btnNo = Instance.new("TextButton", confirmBox)
+btnNo.Size = UDim2.new(0, 100, 0, 30)
+btnNo.Position = UDim2.new(0.55, 0, 0, 80)
+btnNo.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+btnNo.Text = "No"
+btnNo.TextColor3 = Color3.fromRGB(200, 200, 200)
+btnNo.Font = Enum.Font.GothamBold
+btnNo.TextSize = 12
+btnNo.ZIndex = 5002
+Instance.new("UICorner", btnNo).CornerRadius = UDim.new(0, 5)
+
+local function pemicuPopUpTutup()
+    confirmOverlay.Visible = true
+    TweenService:Create(confirmOverlay, TweenInfo.new(0.2), {BackgroundTransparency = 0.4}):Play()
+end
+
+btnNo.MouseButton1Click:Connect(function()
+    TweenService:Create(confirmOverlay, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
+    task.wait(0.2)
+    confirmOverlay.Visible = false
+end)
+
+btnYes.MouseButton1Click:Connect(function()
+    if isTweening then return end
+    isTweening = true
+    local closeTween = TweenService:Create(mainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 550, 0, 0), BackgroundTransparency = 1})
+    closeTween:Play()
+    closeTween.Completed:Wait()
+    screenGui:Destroy() -- Hancur total selamanya dari memori
+end)
+
+
+-- === STRUKTUR WINDOW BAR ATAS (TOMBOL MINIMIZE & CLOSE WARNING) ===
 local windowControlsFrame = Instance.new("Frame", mainFrame)
 windowControlsFrame.Size = UDim2.new(0, 70, 0, 30)
 windowControlsFrame.Position = UDim2.new(1, -80, 0, 10)
 windowControlsFrame.BackgroundTransparency = 1
 
--- Tombol Minus (-) untuk Minimize
 local btnMinimize = Instance.new("TextButton", windowControlsFrame)
 btnMinimize.Size = UDim2.new(0, 25, 0, 25)
 btnMinimize.Position = UDim2.new(0, 5, 0, 2)
@@ -229,10 +284,8 @@ btnMinimize.TextColor3 = Color3.fromRGB(200, 200, 200)
 btnMinimize.Font = Enum.Font.GothamBold
 btnMinimize.TextSize = 14
 Instance.new("UICorner", btnMinimize).CornerRadius = UDim.new(0, 5)
-
 btnMinimize.MouseButton1Click:Connect(animasikanMinimize)
 
--- Tombol Silang (X) untuk Menutup Hancur Total
 local btnCloseTotal = Instance.new("TextButton", windowControlsFrame)
 btnCloseTotal.Size = UDim2.new(0, 25, 0, 25)
 btnCloseTotal.Position = UDim2.new(0, 35, 0, 2)
@@ -242,8 +295,7 @@ btnCloseTotal.TextColor3 = Color3.fromRGB(240, 100, 100)
 btnCloseTotal.Font = Enum.Font.GothamBold
 btnCloseTotal.TextSize = 14
 Instance.new("UICorner", btnCloseTotal).CornerRadius = UDim.new(0, 5)
-
-btnCloseTotal.MouseButton1Click:Connect(animasikanTutupTotal)
+btnCloseTotal.MouseButton1Click:Connect(pemicuPopUpTutup)
 
 
 -- === SIDEBAR KIRI INTERAKTIF ===
@@ -262,9 +314,9 @@ sideCover.Position = UDim2.new(1, -20, 0, 0)
 sideCover.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 sideCover.BorderSizePixel = 0
 
--- Nama Hub
+-- Nama Hub + Tombol Akses Settings Khusus [⚙] Di Sebelah Kiri Atas
 local brandText = Instance.new("TextLabel", sideBar)
-brandText.Size = UDim2.new(1, -20, 0, 45)
+brandText.Size = UDim2.new(1, -50, 0, 45)
 brandText.Position = UDim2.new(0, 15, 0, 5)
 brandText.BackgroundTransparency = 1
 brandText.Text = "Livv Hub"
@@ -272,6 +324,16 @@ brandText.TextColor3 = Color3.fromRGB(255, 255, 255)
 brandText.Font = Enum.Font.GothamBold
 brandText.TextSize = 18
 brandText.TextXAlignment = Enum.TextXAlignment.Left
+
+local btnGearSettings = Instance.new("TextButton", sideBar)
+btnGearSettings.Size = UDim2.new(0, 28, 0, 28)
+btnGearSettings.Position = UDim2.new(1, -38, 0, 10)
+btnGearSettings.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+btnGearSettings.Text = "⚙"
+btnGearSettings.TextColor3 = Color3.fromRGB(200, 200, 200)
+btnGearSettings.Font = Enum.Font.GothamBold
+btnGearSettings.TextSize = 14
+Instance.new("UICorner", btnGearSettings).CornerRadius = UDim.new(0, 6)
 
 -- Container Tab Navigasi (Sidebar Menu)
 local tabContainer = Instance.new("Frame", sideBar)
@@ -309,16 +371,18 @@ Instance.new("UICorner", contentArea).CornerRadius = UDim.new(0, 8)
 local mainTab = Instance.new("ScrollingFrame", contentArea); mainTab.Size = UDim2.new(1,0,1,0); mainTab.BackgroundTransparency = 1; mainTab.ScrollBarThickness = 2
 local targetTab = Instance.new("ScrollingFrame", contentArea); targetTab.Size = UDim2.new(1,0,1,0); targetTab.BackgroundTransparency = 1; targetTab.ScrollBarThickness = 2; targetTab.Visible = false
 local adminTab = Instance.new("ScrollingFrame", contentArea); adminTab.Size = UDim2.new(1,0,1,0); adminTab.BackgroundTransparency = 1; adminTab.ScrollBarThickness = 2; adminTab.Visible = false
+local settingsTab = Instance.new("ScrollingFrame", contentArea); settingsTab.Size = UDim2.new(1,0,1,0); settingsTab.BackgroundTransparency = 1; settingsTab.ScrollBarThickness = 2; settingsTab.Visible = false
 
 local layoutMain = Instance.new("UIListLayout", mainTab); layoutMain.Padding = UDim.new(0, 8); layoutMain.HorizontalAlignment = Enum.HorizontalAlignment.Center
 local layoutTarget = Instance.new("UIListLayout", targetTab); layoutTarget.Padding = UDim.new(0, 8); layoutTarget.HorizontalAlignment = Enum.HorizontalAlignment.Center
 local layoutAdmin = Instance.new("UIListLayout", adminTab); layoutAdmin.Padding = UDim.new(0, 8); layoutAdmin.HorizontalAlignment = Enum.HorizontalAlignment.Center
+local layoutSettings = Instance.new("UIListLayout", settingsTab); layoutSettings.Padding = UDim.new(0, 8); layoutSettings.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 Instance.new("Frame", mainTab).Size = UDim2.new(1, 0, 0, 2)
 Instance.new("Frame", targetTab).Size = UDim2.new(1, 0, 0, 2)
 Instance.new("Frame", adminTab).Size = UDim2.new(1, 0, 0, 2)
+Instance.new("Frame", settingsTab).Size = UDim2.new(1, 0, 0, 2)
 
--- Sistem Pembuatan Navigasi Tab Klik
 local function createTabButton(text)
     local btn = Instance.new("TextButton", tabContainer)
     btn.Size = UDim2.new(1, 0, 0, 34)
@@ -340,6 +404,7 @@ local function switchTab(tabCode)
     mainTab.Visible = (tabCode == "main")
     targetTab.Visible = (tabCode == "target")
     adminTab.Visible = (tabCode == "admin")
+    settingsTab.Visible = (tabCode == "settings")
     
     titleLabel.Text = tabCode:gsub("^%l", string.upper)
     
@@ -356,6 +421,7 @@ end
 btnTabMain.MouseButton1Click:Connect(function() switchTab("main") end)
 btnTabTarget.MouseButton1Click:Connect(function() switchTab("target") end)
 btnTabAdmin.MouseButton1Click:Connect(function() switchTab("admin") end)
+btnGearSettings.MouseButton1Click:Connect(function() switchTab("settings") end)
 switchTab("main")
 
 
@@ -493,10 +559,9 @@ end
 
 
 -- ==========================================================
--- ISI KONTEN DI DALAM TAB MAIN (FITUR AWAL UTAH LENGKAP)
+-- ISI KONTEN DI DALAM TAB MAIN (LENGKAP AMAN)
 -- ==========================================================
 
--- 1. Fly Feature
 local flyBodyVelocity = nil
 local flyLoop = nil
 createToggle(mainTab, "Fly (Terbang Kamera)", function(state)
@@ -535,7 +600,6 @@ createToggle(mainTab, "Fly (Terbang Kamera)", function(state)
     end
 end)
 
--- 2. Noclip Feature
 local noclipLoop = nil
 createToggle(mainTab, "Noclip (Tembus Dinding)", function(state)
     if state then
@@ -553,7 +617,6 @@ createToggle(mainTab, "Noclip (Tembus Dinding)", function(state)
     end
 end)
 
--- 3. ESP Feature
 local espActive = false
 local playerConnections = {}
 local function applyESP(p)
@@ -603,7 +666,6 @@ createToggle(mainTab, "ESP & Name (Melihat Pemain)", function(state)
     end
 end)
 
--- 4. Invincible Feature
 local hpLoop = nil
 createToggle(mainTab, "Invincible (Kekebalan 100 HP)", function(state)
     if state then
@@ -626,14 +688,12 @@ createToggle(mainTab, "Invincible (Kekebalan 100 HP)", function(state)
     end
 end)
 
--- 5. WalkSpeed Slider
 createSlider(mainTab, "Walk Speed Player", 16, 250, 16, function(value)
     if player.Character and player.Character:FindFirstChild("Humanoid") then
         player.Character.Humanoid.WalkSpeed = value
     end
 end)
 
--- 6. JumpPower Slider
 createSlider(mainTab, "Jump Power Player", 50, 500, 50, function(value)
     if player.Character and player.Character:FindFirstChild("Humanoid") then
         local hum = player.Character.Humanoid
@@ -644,7 +704,7 @@ end)
 
 
 -- ==========================================================
--- ISI KONTEN DI DALAM TAB TARGET
+-- ISI KONTEN DI DALAM TAB TARGET (LENGKAP AMAN)
 -- ==========================================================
 local targetInput = Instance.new("TextBox")
 targetInput.Size = UDim2.new(0.96, 0, 0, 32)
@@ -704,7 +764,6 @@ local function getTargetPlayer()
     return nil
 end
 
--- 1. Explode Target
 createToggle(targetTab, "Explode Target", function(state)
     if state then
         local target = getTargetPlayer()
@@ -716,7 +775,6 @@ createToggle(targetTab, "Explode Target", function(state)
     end
 end)
 
--- 2. Teleport Ke Target
 createToggle(targetTab, "Teleport Ke Target", function(state)
     if state then
         local target = getTargetPlayer()
@@ -728,7 +786,6 @@ createToggle(targetTab, "Teleport Ke Target", function(state)
     end
 end)
 
--- 3. Fling Target
 local flingLoop = nil
 local bAngular = nil
 createToggle(targetTab, "Fling Target (Loop Physics)", function(state)
@@ -759,7 +816,7 @@ end)
 
 
 -- ==========================================================
--- KHUSUS TAB ADMIN (HANYA SATU TOMBOL START, TANPA TOMBOL STOP)
+-- ISI KONTEN DI DALAM TAB ADMIN (LENGKAP AMAN)
 -- ==========================================================
 local adminContainer = Instance.new("Frame")
 adminContainer.Size = UDim2.new(0.96, 0, 0, 50)
@@ -779,5 +836,59 @@ adminStartBtn.Parent = adminContainer
 Instance.new("UICorner", adminStartBtn).CornerRadius = UDim.new(0, 5)
 
 adminStartBtn.MouseButton1Click:Connect(function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/DarkNetworks/Infinite-Yield/main/latest.lua'))()
+end)
+
+
+-- ==========================================================
+-- ISI KONTEN UTAMA KHUSUS TAB SETTINGS BARU (EFEK UTANG LENGKAP)
+-- ==========================================================
+
+-- Fungsi Pembantu Bikin Tombol Aksi di Menu Settings
+local function buatTombolSetting(parent, labelText, btnText, callback)
+    local container = Instance.new("Frame")
+    container.Size = UDim2.new(0.96, 0, 0, 45)
+    container.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+    container.Parent = parent
+    Instance.new("UICorner", container).CornerRadius = UDim.new(0, 6)
+
+    local lbl = Instance.new("TextLabel")
+    lbl.Size = UDim2.new(0.6, 0, 1, 0)
+    lbl.Position = UDim2.new(0, 12, 0, 0)
+    lbl.BackgroundTransparency = 1
+    lbl.Text = labelText
+    lbl.TextColor3 = Color3.fromRGB(230, 230, 230)
+    lbl.Font = Enum.Font.GothamBold
+    lbl.TextSize = 11
+    lbl.TextXAlignment = Enum.TextXAlignment.Left
+    lbl.Parent = container
+
+    local setBtn = Instance.new("TextButton")
+    setBtn.Size = UDim2.new(0, 90, 0, 26)
+    setBtn.Position = UDim2.new(1, -102, 0.5, -13)
+    setBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    setBtn.Text = btnText
+    setBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    setBtn.Font = Enum.Font.GothamBold
+    setBtn.TextSize = 11
+    setBtn.Parent = container
+    Instance.new("UICorner", setBtn).CornerRadius = UDim.new(0, 5)
+
+    setBtn.MouseButton1Click:Connect(callback)
+end
+
+-- 1. Fitur Reset Karakter Instan
+buatTombolSetting(settingsTab, "Karakter Stuck? Reset di sini:", "Reset Char", function()
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.Health = 0
+    end
+end)
+
+-- 2. Fitur Rejoin Server Instan
+buatTombolSetting(settingsTab, "Pindah / Masuk Ulang Server:", "Rejoin Game", function()
+    if #Players:GetPlayers() <= 1 then
+        TeleportService:Teleport(game.PlaceId, player)
+    else
+        TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, player)
+    end
 end)
