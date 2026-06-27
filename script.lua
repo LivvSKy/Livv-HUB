@@ -1,5 +1,5 @@
 -- ==========================================================
--- LIVV HUB - V4 ADVANCED MONOCHROME (CONFIRMATION & SETTINGS UPDATE)
+-- LIVV HUB - V5 ULTIMATE MONOCHROME (OTHER GAMES UPDATE)
 -- ==========================================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -79,7 +79,6 @@ loadingFrame:Destroy()
 -- ==========================================================
 -- TAHAP 2: SCRIPT INTI GUI UTAMA & LINGKARAN MINIMIZE
 -- ==========================================================
-
 local miniBtn = Instance.new("ImageButton")
 miniBtn.Size = UDim2.new(0, 55, 0, 55)
 miniBtn.Position = UDim2.new(0, 20, 0, 120)
@@ -116,7 +115,6 @@ local frameCorner = Instance.new("UICorner")
 frameCorner.CornerRadius = UDim.new(0, 10)
 frameCorner.Parent = mainFrame
 
--- Fungsi Pembantu Sistem Seret (Draggable System Global Anti-Lepas)
 local function buatDraggable(uiElemen)
     local dragging = false
     local dragInput, dragStart, startPos
@@ -200,7 +198,7 @@ miniBtn.MouseButton1Click:Connect(animasikanBuka)
 local confirmOverlay = Instance.new("Frame")
 confirmOverlay.Size = UDim2.new(1, 0, 1, 0)
 confirmOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-confirmOverlay.BackgroundTransparency = 1 -- Berawal transparan
+confirmOverlay.BackgroundTransparency = 1
 confirmOverlay.Visible = false
 confirmOverlay.ZIndex = 5000
 confirmOverlay.Parent = mainFrame
@@ -265,11 +263,11 @@ btnYes.MouseButton1Click:Connect(function()
     local closeTween = TweenService:Create(mainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 550, 0, 0), BackgroundTransparency = 1})
     closeTween:Play()
     closeTween.Completed:Wait()
-    screenGui:Destroy() -- Hancur total selamanya dari memori
+    screenGui:Destroy()
 end)
 
 
--- === STRUKTUR WINDOW BAR ATAS (TOMBOL MINIMIZE & CLOSE WARNING) ===
+-- === STRUKTUR WINDOW BAR ATAS ===
 local windowControlsFrame = Instance.new("Frame", mainFrame)
 windowControlsFrame.Size = UDim2.new(0, 70, 0, 30)
 windowControlsFrame.Position = UDim2.new(1, -80, 0, 10)
@@ -314,7 +312,6 @@ sideCover.Position = UDim2.new(1, -20, 0, 0)
 sideCover.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 sideCover.BorderSizePixel = 0
 
--- Nama Hub + Tombol Akses Settings Khusus [⚙] Di Sebelah Kiri Atas
 local brandText = Instance.new("TextLabel", sideBar)
 brandText.Size = UDim2.new(1, -50, 0, 45)
 brandText.Position = UDim2.new(0, 15, 0, 5)
@@ -335,7 +332,6 @@ btnGearSettings.Font = Enum.Font.GothamBold
 btnGearSettings.TextSize = 14
 Instance.new("UICorner", btnGearSettings).CornerRadius = UDim.new(0, 6)
 
--- Container Tab Navigasi (Sidebar Menu)
 local tabContainer = Instance.new("Frame", sideBar)
 tabContainer.Size = UDim2.new(1, -16, 1, -70)
 tabContainer.Position = UDim2.new(0, 8, 0, 55)
@@ -345,7 +341,6 @@ local layoutTabs = Instance.new("UIListLayout")
 layoutTabs.Padding = UDim.new(0, 4)
 layoutTabs.Parent = tabContainer
 
--- Area Header Kanan
 local headerBar = Instance.new("Frame", mainFrame)
 headerBar.Size = UDim2.new(1, -150, 0, 50)
 headerBar.Position = UDim2.new(0, 150, 0, 0)
@@ -371,16 +366,19 @@ Instance.new("UICorner", contentArea).CornerRadius = UDim.new(0, 8)
 local mainTab = Instance.new("ScrollingFrame", contentArea); mainTab.Size = UDim2.new(1,0,1,0); mainTab.BackgroundTransparency = 1; mainTab.ScrollBarThickness = 2
 local targetTab = Instance.new("ScrollingFrame", contentArea); targetTab.Size = UDim2.new(1,0,1,0); targetTab.BackgroundTransparency = 1; targetTab.ScrollBarThickness = 2; targetTab.Visible = false
 local adminTab = Instance.new("ScrollingFrame", contentArea); adminTab.Size = UDim2.new(1,0,1,0); adminTab.BackgroundTransparency = 1; adminTab.ScrollBarThickness = 2; adminTab.Visible = false
+local otherGamesTab = Instance.new("ScrollingFrame", contentArea); otherGamesTab.Size = UDim2.new(1,0,1,0); otherGamesTab.BackgroundTransparency = 1; otherGamesTab.ScrollBarThickness = 2; otherGamesTab.Visible = false
 local settingsTab = Instance.new("ScrollingFrame", contentArea); settingsTab.Size = UDim2.new(1,0,1,0); settingsTab.BackgroundTransparency = 1; settingsTab.ScrollBarThickness = 2; settingsTab.Visible = false
 
 local layoutMain = Instance.new("UIListLayout", mainTab); layoutMain.Padding = UDim.new(0, 8); layoutMain.HorizontalAlignment = Enum.HorizontalAlignment.Center
 local layoutTarget = Instance.new("UIListLayout", targetTab); layoutTarget.Padding = UDim.new(0, 8); layoutTarget.HorizontalAlignment = Enum.HorizontalAlignment.Center
 local layoutAdmin = Instance.new("UIListLayout", adminTab); layoutAdmin.Padding = UDim.new(0, 8); layoutAdmin.HorizontalAlignment = Enum.HorizontalAlignment.Center
+local layoutOther = Instance.new("UIListLayout", otherGamesTab); layoutOther.Padding = UDim.new(0, 8); layoutOther.HorizontalAlignment = Enum.HorizontalAlignment.Center
 local layoutSettings = Instance.new("UIListLayout", settingsTab); layoutSettings.Padding = UDim.new(0, 8); layoutSettings.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 Instance.new("Frame", mainTab).Size = UDim2.new(1, 0, 0, 2)
 Instance.new("Frame", targetTab).Size = UDim2.new(1, 0, 0, 2)
 Instance.new("Frame", adminTab).Size = UDim2.new(1, 0, 0, 2)
+Instance.new("Frame", otherGamesTab).Size = UDim2.new(1, 0, 0, 2)
 Instance.new("Frame", settingsTab).Size = UDim2.new(1, 0, 0, 2)
 
 local function createTabButton(text)
@@ -399,14 +397,20 @@ end
 local btnTabMain = createTabButton("Main")
 local btnTabTarget = createTabButton("Target")
 local btnTabAdmin = createTabButton("Admin")
+local btnTabOther = createTabButton("Other Games") -- TAB BARU BERHASIL DITAMBAHKAN!
 
 local function switchTab(tabCode)
     mainTab.Visible = (tabCode == "main")
     targetTab.Visible = (tabCode == "target")
     adminTab.Visible = (tabCode == "admin")
+    otherGamesTab.Visible = (tabCode == "other")
     settingsTab.Visible = (tabCode == "settings")
     
-    titleLabel.Text = tabCode:gsub("^%l", string.upper)
+    if tabCode == "other" then
+        titleLabel.Text = "Other Games"
+    else
+        titleLabel.Text = tabCode:gsub("^%l", string.upper)
+    end
     
     btnTabMain.BackgroundColor3 = (tabCode == "main") and Color3.fromRGB(22, 22, 22) or Color3.fromRGB(10, 10, 10)
     btnTabMain.TextColor3 = (tabCode == "main") and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(160, 160, 160)
@@ -416,11 +420,15 @@ local function switchTab(tabCode)
     
     btnTabAdmin.BackgroundColor3 = (tabCode == "admin") and Color3.fromRGB(22, 22, 22) or Color3.fromRGB(10, 10, 10)
     btnTabAdmin.TextColor3 = (tabCode == "admin") and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(160, 160, 160)
+
+    btnTabOther.BackgroundColor3 = (tabCode == "other") and Color3.fromRGB(22, 22, 22) or Color3.fromRGB(10, 10, 10)
+    btnTabOther.TextColor3 = (tabCode == "other") and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(160, 160, 160)
 end
 
 btnTabMain.MouseButton1Click:Connect(function() switchTab("main") end)
 btnTabTarget.MouseButton1Click:Connect(function() switchTab("target") end)
 btnTabAdmin.MouseButton1Click:Connect(function() switchTab("admin") end)
+btnTabOther.MouseButton1Click:Connect(function() switchTab("other") end)
 btnGearSettings.MouseButton1Click:Connect(function() switchTab("settings") end)
 switchTab("main")
 
@@ -561,7 +569,6 @@ end
 -- ==========================================================
 -- ISI KONTEN DI DALAM TAB MAIN (LENGKAP AMAN)
 -- ==========================================================
-
 local flyBodyVelocity = nil
 local flyLoop = nil
 createToggle(mainTab, "Fly (Terbang Kamera)", function(state)
@@ -841,10 +848,70 @@ end)
 
 
 -- ==========================================================
--- ISI KONTEN UTAMA KHUSUS TAB SETTINGS BARU (EFEK UTANG LENGKAP)
+-- ISI KONTEN DI DALAM TAB NEW: OTHER GAMES
 -- ==========================================================
+local function buatGameScriptRow(parent, gameName, gameDesc, callback)
+    local container = Instance.new("Frame")
+    container.Size = UDim2.new(0.96, 0, 0, 55)
+    container.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+    container.Parent = parent
+    Instance.new("UICorner", container).CornerRadius = UDim.new(0, 6)
 
--- Fungsi Pembantu Bikin Tombol Aksi di Menu Settings
+    local nameLbl = Instance.new("TextLabel")
+    nameLbl.Size = UDim2.new(0.6, 0, 0, 25)
+    nameLbl.Position = UDim2.new(0, 12, 0, 4)
+    nameLbl.BackgroundTransparency = 1
+    nameLbl.Text = gameName
+    nameLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+    nameLbl.Font = Enum.Font.GothamBold
+    nameLbl.TextSize = 13
+    nameLbl.TextXAlignment = Enum.TextXAlignment.Left
+    nameLbl.Parent = container
+
+    local descLbl = Instance.new("TextLabel")
+    descLbl.Size = UDim2.new(0.6, 0, 0, 20)
+    descLbl.Position = UDim2.new(0, 12, 0, 26)
+    descLbl.BackgroundTransparency = 1
+    descLbl.Text = gameDesc
+    descLbl.TextColor3 = Color3.fromRGB(140, 140, 140)
+    descLbl.Font = Enum.Font.Gotham
+    descLbl.TextSize = 11
+    descLbl.TextXAlignment = Enum.TextXAlignment.Left
+    descLbl.Parent = container
+
+    local executeBtn = Instance.new("TextButton")
+    executeBtn.Size = UDim2.new(0, 90, 0, 28)
+    executeBtn.Position = UDim2.new(1, -102, 0.5, -14)
+    executeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    executeBtn.Text = "Execute"
+    executeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    executeBtn.Font = Enum.Font.GothamBold
+    executeBtn.TextSize = 11
+    executeBtn.Parent = container
+    Instance.new("UICorner", executeBtn).CornerRadius = UDim.new(0, 5)
+
+    executeBtn.MouseButton1Click:Connect(callback)
+end
+
+-- Game 1: Funky Friday (Sesuai Permintaan)
+buatGameScriptRow(otherGamesTab, "Funky Friday", "auto click by null fire", function()
+    loadstring(game:HttpGet("https://null-api.onrender.com/script", true))()
+end)
+
+buatGameScriptRow(otherGamesTab, "99 Nights in the forest", "99 nights in the forest script", function()
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/loader.lua", true))()
+end)
+
+-- Slot Game Baru (Bisa Kamu Tambahkan Sendiri di Bawah Ini Nanti):
+-- buatGameScriptRow(otherGamesTab, "Nama Game Kamu", "Deskripsi Script Kamu", function()
+--     loadstring(game:HttpGet("LINK_LOADSTRING_KAMU"))()
+-- end)
+
+
+-- ==========================================================
+-- ISI KONTEN DI DALAM TAB SETTINGS (LENGKAP AMAN)
+-- ==========================================================
 local function buatTombolSetting(parent, labelText, btnText, callback)
     local container = Instance.new("Frame")
     container.Size = UDim2.new(0.96, 0, 0, 45)
@@ -877,14 +944,12 @@ local function buatTombolSetting(parent, labelText, btnText, callback)
     setBtn.MouseButton1Click:Connect(callback)
 end
 
--- 1. Fitur Reset Karakter Instan
 buatTombolSetting(settingsTab, "Karakter Stuck? Reset di sini:", "Reset Char", function()
     if player.Character and player.Character:FindFirstChild("Humanoid") then
         player.Character.Humanoid.Health = 0
     end
 end)
 
--- 2. Fitur Rejoin Server Instan
 buatTombolSetting(settingsTab, "Pindah / Masuk Ulang Server:", "Rejoin Game", function()
     if #Players:GetPlayers() <= 1 then
         TeleportService:Teleport(game.PlaceId, player)
