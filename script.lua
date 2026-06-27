@@ -898,9 +898,8 @@ buatGameScriptRow(otherGamesTab, "Funky Friday", "auto click by null fire", func
     loadstring(game:HttpGet("https://null-api.onrender.com/script", true))()
 end)
 
-buatGameScriptRow(otherGamesTab, "99 Nights in the forest", "99 nights in the forest script", function()
-
-loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/loader.lua", true))()
+buatGameScriptRow(otherGamesTab, "99 Nights in the forest", "-", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/loader.lua", true))()
 end)
 
 -- Slot Game Baru (Bisa Kamu Tambahkan Sendiri di Bawah Ini Nanti):
