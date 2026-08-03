@@ -1,6 +1,3 @@
--- ==========================================================
--- LIVV HUB - V5 ULTIMATE MONOCHROME (OTHER GAMES UPDATE)
--- ==========================================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -9,25 +6,19 @@ local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
 local camera = workspace.CurrentCamera
 
--- KUSTOMISASI LOGO KAMI (Ubah ID di bawah jika ingin mengganti gambar tombol bulat)
 local logoId = "rbxassetid://6031075931"
 
--- Hapus GUI lama jika ada (Reset Total)
 local playerGui = player:WaitForChild("PlayerGui")
 if playerGui:FindFirstChild("LivvHubPanel") then
     playerGui.LivvHubPanel:Destroy()
 end
 
--- === MEMBUAT GUI UTAMA ===
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "LivvHubPanel"
 screenGui.ResetOnSpawn = false
 screenGui.DisplayOrder = math.huge
 screenGui.Parent = playerGui
 
--- ==========================================================
--- TAHAP 1: POPUP LOADING SCREEN AWAL (EFEK ANIMASI)
--- ==========================================================
 local loadingFrame = Instance.new("Frame")
 loadingFrame.Size = UDim2.new(0, 320, 0, 140)
 loadingFrame.Position = UDim2.new(0.5, -160, 0.5, -70)
@@ -75,10 +66,6 @@ fadeTween:Play()
 fadeTween.Completed:Wait()
 loadingFrame:Destroy()
 
-
--- ==========================================================
--- TAHAP 2: SCRIPT INTI GUI UTAMA & LINGKARAN MINIMIZE
--- ==========================================================
 local miniBtn = Instance.new("ImageButton")
 miniBtn.Size = UDim2.new(0, 55, 0, 55)
 miniBtn.Position = UDim2.new(0, 20, 0, 120)
@@ -150,8 +137,6 @@ end
 buatDraggable(mainFrame)
 buatDraggable(miniBtn)
 
-
--- === SISTEM ANIMASI SMOOTH OPEN / MINIMIZE / CLOSE ===
 local isTweening = false
 local originalSize = UDim2.new(0, 550, 0, 380)
 
@@ -191,10 +176,6 @@ end
 
 miniBtn.MouseButton1Click:Connect(animasikanBuka)
 
-
--- ==========================================================
--- SISTEM POP-UP WARNING KONFIRMASI CLOSE TOTAL (YES / NO)
--- ==========================================================
 local confirmOverlay = Instance.new("Frame")
 confirmOverlay.Size = UDim2.new(1, 0, 1, 0)
 confirmOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -266,8 +247,6 @@ btnYes.MouseButton1Click:Connect(function()
     screenGui:Destroy()
 end)
 
-
--- === STRUKTUR WINDOW BAR ATAS ===
 local windowControlsFrame = Instance.new("Frame", mainFrame)
 windowControlsFrame.Size = UDim2.new(0, 70, 0, 30)
 windowControlsFrame.Position = UDim2.new(1, -80, 0, 10)
@@ -295,8 +274,6 @@ btnCloseTotal.TextSize = 14
 Instance.new("UICorner", btnCloseTotal).CornerRadius = UDim.new(0, 5)
 btnCloseTotal.MouseButton1Click:Connect(pemicuPopUpTutup)
 
-
--- === SIDEBAR KIRI INTERAKTIF ===
 local sideBar = Instance.new("Frame", mainFrame)
 sideBar.Size = UDim2.new(0, 150, 1, 0)
 sideBar.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
@@ -356,7 +333,6 @@ titleLabel.Font = Enum.Font.GothamBold
 titleLabel.TextSize = 15
 titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
--- Container Konten Utama Sebelah Kanan
 local contentArea = Instance.new("Frame", mainFrame)
 contentArea.Size = UDim2.new(1, -165, 1, -65)
 contentArea.Position = UDim2.new(0, 157, 0, 55)
@@ -397,7 +373,7 @@ end
 local btnTabMain = createTabButton("Main")
 local btnTabTarget = createTabButton("Target")
 local btnTabAdmin = createTabButton("Admin")
-local btnTabOther = createTabButton("Other Games") -- TAB BARU BERHASIL DITAMBAHKAN!
+local btnTabOther = createTabButton("Other Games")
 
 local function switchTab(tabCode)
     mainTab.Visible = (tabCode == "main")
@@ -432,8 +408,6 @@ btnTabOther.MouseButton1Click:Connect(function() switchTab("other") end)
 btnGearSettings.MouseButton1Click:Connect(function() switchTab("settings") end)
 switchTab("main")
 
-
--- === FUNGSI BANTUAN KONTROL: TOGGLE ON / OFF ===
 local function createToggle(parent, labelText, callback)
     local container = Instance.new("Frame")
     container.Size = UDim2.new(0.96, 0, 0, 45)
@@ -482,8 +456,6 @@ local function createToggle(parent, labelText, callback)
     end)
 end
 
-
--- === FUNGSI BANTUAN KONTROL: SLIDER BAR + TEXTBOX INPUT ===
 local function createSlider(parent, labelText, minVal, maxVal, defaultVal, callback)
     local container = Instance.new("Frame")
     container.Size = UDim2.new(0.96, 0, 0, 55)
@@ -565,10 +537,6 @@ local function createSlider(parent, labelText, minVal, maxVal, defaultVal, callb
     end)
 end
 
-
--- ==========================================================
--- ISI KONTEN DI DALAM TAB MAIN (LENGKAP AMAN)
--- ==========================================================
 local flyBodyVelocity = nil
 local flyLoop = nil
 createToggle(mainTab, "Fly (Terbang Kamera)", function(state)
@@ -709,10 +677,6 @@ createSlider(mainTab, "Jump Power Player", 50, 500, 50, function(value)
     end
 end)
 
-
--- ==========================================================
--- ISI KONTEN DI DALAM TAB TARGET (LENGKAP AMAN)
--- ==========================================================
 local targetInput = Instance.new("TextBox")
 targetInput.Size = UDim2.new(0.96, 0, 0, 32)
 targetInput.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
@@ -821,10 +785,6 @@ createToggle(targetTab, "Fling Target (Loop Physics)", function(state)
     end
 end)
 
-
--- ==========================================================
--- ISI KONTEN DI DALAM TAB ADMIN (LENGKAP AMAN)
--- ==========================================================
 local adminContainer = Instance.new("Frame")
 adminContainer.Size = UDim2.new(0.96, 0, 0, 50)
 adminContainer.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
@@ -846,10 +806,6 @@ adminStartBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/DarkNetworks/Infinite-Yield/main/latest.lua'))()
 end)
 
-
--- ==========================================================
--- ISI KONTEN DI DALAM TAB NEW: OTHER GAMES
--- ==========================================================
 local function buatGameScriptRow(parent, gameName, gameDesc, callback)
     local container = Instance.new("Frame")
     container.Size = UDim2.new(0.96, 0, 0, 55)
@@ -893,24 +849,10 @@ local function buatGameScriptRow(parent, gameName, gameDesc, callback)
     executeBtn.MouseButton1Click:Connect(callback)
 end
 
--- Game 1: Funky Friday (Sesuai Permintaan)
 buatGameScriptRow(otherGamesTab, "Funky Friday", "auto click by null fire", function()
     loadstring(game:HttpGet("https://null-api.onrender.com/script", true))()
 end)
 
-buatGameScriptRow(otherGamesTab, "99 Nights in the forest", "-", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/loader.lua", true))()
-end)
-
--- Slot Game Baru (Bisa Kamu Tambahkan Sendiri di Bawah Ini Nanti):
--- buatGameScriptRow(otherGamesTab, "Nama Game Kamu", "Deskripsi Script Kamu", function()
---     loadstring(game:HttpGet("LINK_LOADSTRING_KAMU"))()
--- end)
-
-
--- ==========================================================
--- ISI KONTEN DI DALAM TAB SETTINGS (LENGKAP AMAN)
--- ==========================================================
 local function buatTombolSetting(parent, labelText, btnText, callback)
     local container = Instance.new("Frame")
     container.Size = UDim2.new(0.96, 0, 0, 45)
